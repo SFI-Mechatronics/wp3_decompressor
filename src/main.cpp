@@ -53,9 +53,29 @@ int main(int argc, char **argv)
             nh.getParam("filter_value", filterValue);
 
             ros::Duration(1.0).sleep();
+
+            int sensorType = 0;
+            if (nh.hasParam("sensor_type"))
+                nh.getParam("sensor_type", sensorType);
             
-            std::string outputTopic = "/master/"+sensorName+"/pc2_decompressed";
-            std::string inputTopic = "/"+sensorName+"/wp3/pc2_compressed";
+            std::string outputTopic;
+            std::string inputTopic;
+            
+            switch(sensorType) {
+                
+                case 0: // Kinect
+                            
+                    outputTopic = "/master/"+sensorName+"/pc2_decompressed";
+                    inputTopic = "/"+sensorName+"/wp3/pc2_compressed";
+                    break;
+            
+                case 1: // Realsense
+                            
+                    outputTopic = "/master/"+sensorName+"/pc2_decompressed_rs";
+                    inputTopic = "/"+sensorName+"/wp3/pc2_compressed_rs";
+                    break;
+                    
+            } // End switch (sensorType)
             
             // Start decompressor
             wp3::CloudDecompressor decompressor(outputTopic, inputTopic, filterValue, false);
