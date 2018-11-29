@@ -61,19 +61,14 @@ int main(int argc, char **argv)
 
     switch(sensorType) {
     case 0: // Kinect
-<<<<<<< HEAD
+
       ROS_INFO("Starting node using KINECT V2");
-=======
->>>>>>> e49eb637398cde8ed515c268df3027df09a0667b
       outputTopic = "/master/"+sensorName+"/kinect_decomp";
       inputTopic = "/"+sensorName+"/wp3/kinect_comp";
       break;
 
     case 1: // Velodyne
-<<<<<<< HEAD
       ROS_INFO("Starting node using VELODYNE");
-=======
->>>>>>> e49eb637398cde8ed515c268df3027df09a0667b
       outputTopic = "/master/"+sensorName+"/velodyne_decomp";
       inputTopic = "/"+sensorName+"/wp3/velodyne_comp";
       break;
