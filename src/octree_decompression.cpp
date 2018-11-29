@@ -39,10 +39,11 @@ void PointCloudDecompression::decodePointCloud (std::istream& compressed_tree_da
 		// p-frame decoding - decode XOR encoded tree structure
 		this->deserializeTree (binary_tree_data_vector_, true);
 
+
 	// assign point cloud properties
 	output_->height = 1;
 	output_->width = static_cast<uint32_t> (cloud_arg->points.size ());
-	output_->is_dense = false;
+  output_->is_dense = true;
 
 	if (b_show_statistics_)
 	{
