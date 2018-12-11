@@ -142,8 +142,16 @@ void PointCloudDecompression::deserializeTreeCallback (LeafT &leaf_arg, const Oc
 	newPoint.z = static_cast<float> ((static_cast<double> (key_arg.z) + 0.5) * this->resolution_ + this->min_z_);
 
 	// get point intensity
-	const unsigned char& intensity = static_cast<unsigned char> (*(pointIntensityVectorIterator_++));
-	newPoint.intensity = static_cast<float> (intensity);
+//  const float intens;
+  char intens[sizeof(float)];
+
+  for (int i=0; i<sizeof(float); i++)
+    intens[i] = static_cast<unsigned char> (*(pointIntensityVectorIterator_++));
+
+//	const unsigned char& intensity = static_cast<unsigned char> (*(pointIntensityVectorIterator_++));
+  const float * intensity = reinterpret_cast<float *> (intens);
+
+  newPoint.intensity = *intensity;
 
 	// add point to point cloud
 	output_->points.push_back (newPoint);
