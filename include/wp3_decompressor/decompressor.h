@@ -50,24 +50,24 @@ public:
 private:
 
 	// ROS variables
-	ros::NodeHandle nh_;
-	ros::Subscriber sub_;
-	ros::Publisher pub_;
+  ros::NodeHandle nh;
+  ros::Subscriber sub;
+  ros::Publisher pub;
 
 	// Pointers to temporary point clouds
-	PointCloudXYZI::Ptr decompressedCloud_;
-	PointCloudXYZI::Ptr outputCloud_;
+  PointCloudXYZI::Ptr decompressedCloud;
+  PointCloudXYZI::Ptr outputCloud;
 
-	Decompressor pointCloudDecoder_;
+  Decompressor pointCloudDecoder;
 
 	// Passthrough filter
-	float intensityLimit_;
-	pcl::PassThrough<PointType_out> ptfilter_; // Initializing with true will allow us to extract the removed indices
+  float intensityLimit;
+  pcl::PassThrough<PointType_out> ptfilter; // Initializing with true will allow us to extract the removed indices
 
 	// Logging
-	bool showStatistics_;
-	std::string logFile_;
-	std::ofstream logStream_;
+  bool showStatistics;
+  std::string logFile;
+  std::ofstream logStream;
 
 };
 

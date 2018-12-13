@@ -30,22 +30,18 @@ using namespace pcl::octree;
 
 namespace wp3 {
 
-typedef pcl::PointXYZI PointT_decomp;
-typedef OctreePointCloudDensityContainer LeafT_decomp;
-typedef OctreeContainerEmpty BranchT_decomp;
-typedef Octree2BufBase<LeafT_decomp, LeafT_decomp> OctreeT_decomp;
+typedef pcl::PointXYZI PointT;
+typedef OctreePointCloudDensityContainer LeafT;
+typedef OctreeContainerEmpty BranchT;
+typedef Octree2BufBase<LeafT, LeafT> OctreeT;
 
-class PointCloudDecompression : public OctreePointCloud<PointT_decomp, LeafT_decomp, BranchT_decomp, OctreeT_decomp>
+class PointCloudDecompression : public OctreePointCloud<PointT, LeafT, BranchT, OctreeT>
 {
 public:
-	typedef PointT_decomp PointT;
-	typedef LeafT_decomp LeafT;
-	typedef BranchT_decomp BranchT;
-	typedef OctreeT_decomp OctreeT;
 
-	typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloud PointCloud;
-	typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloudPtr PointCloudPtr;
-	typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloudConstPtr PointCloudConstPtr;
+  typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloud PointCloud;
+  typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloudPtr PointCloudPtr;
+  typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloudConstPtr PointCloudConstPtr;
 
 	// Boost shared pointers
 	typedef boost::shared_ptr<PointCloudDecompression > Ptr;
@@ -59,16 +55,16 @@ public:
 	 *
 	 */
 	PointCloudDecompression ( bool showStatistics_arg = false) :
-		OctreePointCloud<PointT, LeafT, BranchT, OctreeT> (0.05),
-		entropy_coder_ (),
-		frame_ID_ (0),
-		point_count_ (0),
-		i_frame_ (true),
-		b_show_statistics_ (showStatistics_arg),
-		pointIntensityVector_ (),
-		pointIntensityVectorIterator_ (){
+    OctreePointCloud<PointT, LeafT, BranchT, OctreeT> (0.05),
+    entropy_coder (),
+    frame_ID (0),
+    point_count (0),
+    i_frame (true),
+    b_show_statistics (showStatistics_arg),
+    pointIntensityVector (),
+    pointIntensityVectorIterator (){
 
-		frame_header_identifier_ = "<WP3-OCT-COMPRESSED>";
+    frame_header_identifier = "<WP3-OCT-COMPRESSED>";
 		//this->setResolution (octree_resolution_);
 
 	} // End Constructor
@@ -86,9 +82,9 @@ public:
 	 */
 	inline void setOutputCloud (const PointCloudPtr &cloud_arg)
 	{
-		if (output_ != cloud_arg)
+    if (output != cloud_arg)
 		{
-			output_ = cloud_arg;
+      output = cloud_arg;
 		}
 	}
 
@@ -104,7 +100,7 @@ public:
 	 * \param[in] point_arg: a point addressing a voxel
 	 * \return amount of points that fall within leaf node voxel
 	 */
-	unsigned int getVoxelDensityAtPoint (const PointT& point_arg) const
+  unsigned int getVoxelDensityAtPoint (const PointT& point_arg) const
 	{
 		unsigned int point_count = 0;
 
@@ -144,31 +140,31 @@ private:
 
 
 	/** \brief Pointer to output point cloud dataset. */
-	PointCloudPtr output_;
+  PointCloudPtr output;
 
 	/** \brief Vector for storing binary tree structure */
-	std::vector<char> binary_tree_data_vector_;
+  std::vector<char> binary_tree_data_vector;
 
 	/** \brief Vector for storing point intensity information  */
-	std::vector<char> pointIntensityVector_;
+  std::vector<char> pointIntensityVector;
 
 	/** \brief Iterator on differential point information vector */
-	std::vector<char>::const_iterator pointIntensityVectorIterator_;
+  std::vector<char>::const_iterator pointIntensityVectorIterator;
 
 	/** \brief Static range coder instance */
-	pcl::StaticRangeCoder entropy_coder_;
+  pcl::StaticRangeCoder entropy_coder;
 
 	// Settings
-	uint32_t frame_ID_;
-	uint64_t point_count_;
-	uint64_t compressed_point_data_len_;
-	bool i_frame_;
+  uint32_t frame_ID;
+  uint64_t point_count;
+  uint64_t compressed_point_data_len;
+  bool i_frame;
 
 	//bool activating statistics
-	bool b_show_statistics_;
+  bool b_show_statistics;
 
 	//header
-	const char* frame_header_identifier_;
+  const char* frame_header_identifier;
 
 };
 

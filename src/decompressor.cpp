@@ -11,26 +11,26 @@ namespace wp3 {
 
 // Constructor
 CloudDecompressor::CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, const float intensityLimit, const bool showStatistics) :
-								 decompressedCloud_(new PointCloudXYZI ()),
-								 outputCloud_(new PointCloudXYZI ()),
-								 ptfilter_(false),
-								 intensityLimit_(intensityLimit),
-								 showStatistics_(showStatistics),
-								 logFile_("/home/sfi/decompressorlog.txt"),
-								 pointCloudDecoder_(showStatistics)
+                 decompressedCloud(new PointCloudXYZI ()),
+                 outputCloud(new PointCloudXYZI ()),
+                 ptfilter(false),
+                 intensityLimit(intensityLimit),
+                 showStatistics(showStatistics),
+                 logFile("/home/sfi/decompressorlog.txt"),
+                 pointCloudDecoder(showStatistics)
 {
-	if(showStatistics_){
-		logStream_.open(logFile_.c_str());
-		logStream_ << "Time" << std::endl;
+  if(showStatistics){
+    logStream.open(logFile.c_str());
+    logStream << "Time" << std::endl;
 	}
 
-	sub_ = nh_.subscribe<std_msgs::String>(inputMsgTopic, 1, &wp3::CloudDecompressor::roscallback, this);
-	pub_ = nh_.advertise<PointCloudXYZI>(outputCloudTopic, 1);
+  sub = nh.subscribe<std_msgs::String>(inputMsgTopic, 1, &wp3::CloudDecompressor::roscallback, this);
+  pub = nh.advertise<PointCloudXYZI>(outputCloudTopic, 1);
 }
 
 CloudDecompressor::~CloudDecompressor(){
-	if(showStatistics_)
-		logStream_.close();
+  if(showStatistics)
+    logStream.close();
 }
 
 // Callback for ROS subscriber
@@ -45,24 +45,24 @@ void CloudDecompressor::roscallback(const std_msgs::String::ConstPtr& msg){
 	compressedData << msg->data;
 
 	// Decode stream to point cloud
-	pointCloudDecoder_.decodePointCloud (compressedData, decompressedCloud_);
+  pointCloudDecoder.decodePointCloud (compressedData, decompressedCloud);
 
 	// Filter point cloud based on intensity
-	ptfilter_.setInputCloud (decompressedCloud_);
-	ptfilter_.setFilterFieldName ("intensity");
-	ptfilter_.setFilterLimits (intensityLimit_, FLT_MAX);
-	ptfilter_.filter (*outputCloud_);
+  ptfilter.setInputCloud (decompressedCloud);
+  ptfilter.setFilterFieldName ("intensity");
+  ptfilter.setFilterLimits (intensityLimit, FLT_MAX);
+  ptfilter.filter (*outputCloud);
 
 	clock_t end = clock();
 	double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.0;
 
 	// Publish the decompressed cloud
-	outputCloud_->header.frame_id = _GLOBALFRAME;
-	pub_.publish(outputCloud_);
+  outputCloud->header.frame_id = _GLOBALFRAME;
+  pub.publish(outputCloud);
 
-	if (showStatistics_)
+  if (showStatistics)
 	{
-		logStream_ << time << std::endl;
+    logStream << time << std::endl;
 	}
 
 }

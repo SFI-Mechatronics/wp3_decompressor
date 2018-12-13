@@ -26,32 +26,32 @@ void PointCloudDecompression::decodePointCloud (std::istream& compressed_tree_da
 	this->entropyDecoding (compressed_tree_data_in_arg);
 
 	// initialize point decoding
-	pointIntensityVectorIterator_ = pointIntensityVector_.begin ();
+  pointIntensityVectorIterator = pointIntensityVector.begin ();
 
 	// initialize output cloud
-	output_->points.clear ();
-	output_->points.reserve (static_cast<std::size_t> (point_count_));
+  output->points.clear ();
+  output->points.reserve (static_cast<std::size_t> (point_count));
 
-	if (i_frame_)
+  if (i_frame)
 		// i-frame decoding - decode tree structure without referencing previous buffer
-		this->deserializeTree (binary_tree_data_vector_, false);
+    this->deserializeTree (binary_tree_data_vector, false);
 	else
 		// p-frame decoding - decode XOR encoded tree structure
-		this->deserializeTree (binary_tree_data_vector_, true);
+    this->deserializeTree (binary_tree_data_vector, true);
 
 
 	// assign point cloud properties
-	output_->height = 1;
-	output_->width = static_cast<uint32_t> (cloud_arg->points.size ());
-  output_->is_dense = true;
+  output->height = 1;
+  output->width = static_cast<uint32_t> (cloud_arg->points.size ());
+  output->is_dense = true;
 
-	if (b_show_statistics_)
+  if (b_show_statistics)
 	{
-		float bytes_per_XYZ = static_cast<float> (compressed_point_data_len_) / static_cast<float> (point_count_);
+    float bytes_per_XYZ = static_cast<float> (compressed_point_data_len) / static_cast<float> (point_count);
 
 //		PCL_INFO ("*** POINTCLOUD DECODING ***\n");
-		PCL_INFO ("Frame ID: %d\n", frame_ID_);
-//		if (i_frame_)
+    PCL_INFO ("Frame ID: %d\n", frame_ID);
+//		if (i_frame)
 //			PCL_INFO ("Decoding Frame: Intra frame\n");
 //		else
 //			PCL_INFO ("Decoding Frame: Prediction frame\n");
@@ -71,12 +71,12 @@ void PointCloudDecompression::syncToHeader (std::istream& compressed_tree_data_i
 {
 	// sync to frame header
 	unsigned int header_id_pos = 0;
-	while (header_id_pos < strlen (frame_header_identifier_))
+  while (header_id_pos < strlen (frame_header_identifier))
 	{
 		char readChar;
 		compressed_tree_data_in_arg.read (static_cast<char*> (&readChar), sizeof (readChar));
-		if (readChar != frame_header_identifier_[header_id_pos++])
-			header_id_pos = (frame_header_identifier_[0]==readChar)?1:0;
+    if (readChar != frame_header_identifier[header_id_pos++])
+      header_id_pos = (frame_header_identifier[0]==readChar)?1:0;
 	}
 } // End syncToHeader
 
@@ -84,15 +84,15 @@ void PointCloudDecompression::syncToHeader (std::istream& compressed_tree_data_i
 void PointCloudDecompression::readFrameHeader ( std::istream& compressed_tree_data_in_arg)
 {
 	// read header
-	compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&frame_ID_), sizeof (frame_ID_));
-	compressed_tree_data_in_arg.read (reinterpret_cast<char*>(&i_frame_), sizeof (i_frame_));
-	if (i_frame_)
+  compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&frame_ID), sizeof (frame_ID));
+  compressed_tree_data_in_arg.read (reinterpret_cast<char*>(&i_frame), sizeof (i_frame));
+  if (i_frame)
 	{
 		double min_x, min_y, min_z, max_x, max_y, max_z;
 		double octree_resolution;
 
 		// read coder configuration
-		compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&point_count_), sizeof (point_count_));
+    compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&point_count), sizeof (point_count));
 		compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&octree_resolution), sizeof (octree_resolution));
 
 		// read octree bounding box
@@ -117,24 +117,24 @@ void PointCloudDecompression::entropyDecoding (std::istream& compressed_tree_dat
 	uint64_t binary_tree_data_vector_size;
 	uint64_t point_intensity_data_vector_size;
 
-	compressed_point_data_len_ = 0;
+  compressed_point_data_len = 0;
 
 	// decode binary octree structure
 	compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&binary_tree_data_vector_size), sizeof (binary_tree_data_vector_size));
-	binary_tree_data_vector_.resize (static_cast<std::size_t> (binary_tree_data_vector_size));
-	compressed_point_data_len_ += entropy_coder_.decodeStreamToCharVector (compressed_tree_data_in_arg, binary_tree_data_vector_);
+  binary_tree_data_vector.resize (static_cast<std::size_t> (binary_tree_data_vector_size));
+  compressed_point_data_len += entropy_coder.decodeStreamToCharVector (compressed_tree_data_in_arg, binary_tree_data_vector);
 
 	// decode leaf voxel intensity
 	compressed_tree_data_in_arg.read (reinterpret_cast<char*> (&point_intensity_data_vector_size), sizeof (point_intensity_data_vector_size));
-	pointIntensityVector_.resize (static_cast<std::size_t> (point_intensity_data_vector_size));
-	compressed_point_data_len_ += entropy_coder_.decodeStreamToCharVector (compressed_tree_data_in_arg, pointIntensityVector_);
+  pointIntensityVector.resize (static_cast<std::size_t> (point_intensity_data_vector_size));
+  compressed_point_data_len += entropy_coder.decodeStreamToCharVector (compressed_tree_data_in_arg, pointIntensityVector);
 
 } // End entropyDecoding()
 
 
 void PointCloudDecompression::deserializeTreeCallback (LeafT &leaf_arg, const OctreeKey& key_arg)
 {
-	PointT newPoint;
+  PointT newPoint;
 
 	// calculate center of lower voxel corner
 	newPoint.x = static_cast<float> ((static_cast<double> (key_arg.x) + 0.5) * this->resolution_ + this->min_x_);
@@ -146,7 +146,7 @@ void PointCloudDecompression::deserializeTreeCallback (LeafT &leaf_arg, const Oc
   char intens[sizeof(float)];
 
   for (int i=0; i<sizeof(float); i++)
-    intens[i] = static_cast<unsigned char> (*(pointIntensityVectorIterator_++));
+    intens[i] = static_cast<unsigned char> (*(pointIntensityVectorIterator++));
 
 //	const unsigned char& intensity = static_cast<unsigned char> (*(pointIntensityVectorIterator_++));
   const float * intensity = reinterpret_cast<float *> (intens);
@@ -154,7 +154,7 @@ void PointCloudDecompression::deserializeTreeCallback (LeafT &leaf_arg, const Oc
   newPoint.intensity = *intensity;
 
 	// add point to point cloud
-	output_->points.push_back (newPoint);
+  output->points.push_back (newPoint);
 
 } // End deserializeTreeCallback
 
