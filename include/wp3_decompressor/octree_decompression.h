@@ -43,18 +43,18 @@ public:
   typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloudPtr PointCloudPtr;
   typedef typename OctreePointCloud<PointT, LeafT, BranchT, OctreeT>::PointCloudConstPtr PointCloudConstPtr;
 
-	// Boost shared pointers
-	typedef boost::shared_ptr<PointCloudDecompression > Ptr;
-	typedef boost::shared_ptr<const PointCloudDecompression > ConstPtr;
+  // Boost shared pointers
+  typedef boost::shared_ptr<PointCloudDecompression > Ptr;
+  typedef boost::shared_ptr<const PointCloudDecompression > ConstPtr;
 
-	typedef typename OctreeT::LeafNode LeafNode;
-	typedef typename OctreeT::BranchNode BranchNode;
+  typedef typename OctreeT::LeafNode LeafNode;
+  typedef typename OctreeT::BranchNode BranchNode;
 
 
-	/** \brief Constructor
-	 *
-	 */
-	PointCloudDecompression ( bool showStatistics_arg = false) :
+  /** \brief Constructor
+   *
+   */
+  PointCloudDecompression ( bool showStatistics_arg = false) :
     OctreePointCloud<PointT, LeafT, BranchT, OctreeT> (0.05),
     entropy_coder (),
     frame_ID (0),
@@ -65,106 +65,106 @@ public:
     pointIntensityVectorIterator (){
 
     frame_header_identifier = "<WP3-OCT-COMPRESSED>";
-		//this->setResolution (octree_resolution_);
+    //this->setResolution (octree_resolution_);
 
-	} // End Constructor
-
-
-	/** \brief Empty deconstructor. */
-	virtual ~PointCloudDecompression (){
-
-	}
+  } // End Constructor
 
 
+  /** \brief Empty deconstructor. */
+  virtual ~PointCloudDecompression (){
 
-	/** \brief Provide a pointer to the output data set.
-	 * \param cloud_arg: the boost shared pointer to a PointCloud message
-	 */
-	inline void setOutputCloud (const PointCloudPtr &cloud_arg)
-	{
+  }
+
+
+
+  /** \brief Provide a pointer to the output data set.
+   * \param cloud_arg: the boost shared pointer to a PointCloud message
+   */
+  inline void setOutputCloud (const PointCloudPtr & cloud_arg)
+  {
     if (output != cloud_arg)
-		{
+    {
       output = cloud_arg;
-		}
-	}
+    }
+  }
 
 
-	/** \brief Decode point cloud from input stream
-	 * \param compressed_tree_data_in_arg: binary input stream containing compressed data
-	 * \param cloud_arg: reference to decoded point cloud
-	 */
-	void decodePointCloud (std::istream& compressed_tree_data_in_arg, PointCloudPtr &cloud_arg);
+  /** \brief Decode point cloud from input stream
+   * \param compressed_tree_data_in_arg: binary input stream containing compressed data
+   * \param cloud_arg: reference to decoded point cloud
+   */
+  void decodePointCloud (std::istream & compressed_tree_data_in_arg, PointCloudPtr & cloud_arg);
 
 
-	/** \brief Get the amount of points within a leaf node voxel which is addressed by a point
-	 * \param[in] point_arg: a point addressing a voxel
-	 * \return amount of points that fall within leaf node voxel
-	 */
-  unsigned int getVoxelDensityAtPoint (const PointT& point_arg) const
-	{
-		unsigned int point_count = 0;
+  /** \brief Get the amount of points within a leaf node voxel which is addressed by a point
+   * \param[in] point_arg: a point addressing a voxel
+   * \return amount of points that fall within leaf node voxel
+   */
+  unsigned int getVoxelDensityAtPoint (const PointT & point_arg) const
+  {
+    unsigned int point_count = 0;
 
-		OctreePointCloudDensityContainer* leaf = this->findLeafAtPoint (point_arg);
+    OctreePointCloudDensityContainer * leaf = this->findLeafAtPoint (point_arg);
 
-		if (leaf)
-			point_count = leaf->getPointCounter ();
+    if (leaf)
+      point_count = leaf->getPointCounter ();
 
-		return (point_count);
-	}
+    return (point_count);
+  }
 
 private:
 
-	/** \brief Decode leaf nodes information during deserialization
-	 * \param key_arg octree key of new leaf node
-	 */
-	// param leaf_arg reference to new leaf node
-	virtual void deserializeTreeCallback (LeafT &leaf_arg, const OctreeKey& key_arg);
+  /** \brief Decode leaf nodes information during deserialization
+   * \param key_arg octree key of new leaf node
+   */
+  // param leaf_arg reference to new leaf node
+  virtual void deserializeTreeCallback (LeafT & leaf_arg, const OctreeKey & key_arg);
 
 
-	/** \brief Read frame information to output stream
-	 * \param compressed_tree_data_in_arg: binary input stream
-	 */
-	void readFrameHeader (std::istream& compressed_tree_data_in_arg);
+  /** \brief Read frame information to output stream
+   * \param compressed_tree_data_in_arg: binary input stream
+   */
+  void readFrameHeader (std::istream & compressed_tree_data_in_arg);
 
 
-	/** \brief Synchronize to frame header
-	 * \param compressed_tree_data_in_arg: binary input stream
-	 */
-	void syncToHeader (std::istream& compressed_tree_data_in_arg);
+  /** \brief Synchronize to frame header
+   * \param compressed_tree_data_in_arg: binary input stream
+   */
+  void syncToHeader (std::istream & compressed_tree_data_in_arg);
 
 
-	/** \brief Entropy decoding of input binary stream and output to information vectors
-	 * \param compressed_tree_data_in_arg: binary input stream
-	 */
-	void entropyDecoding (std::istream& compressed_tree_data_in_arg);
+  /** \brief Entropy decoding of input binary stream and output to information vectors
+   * \param compressed_tree_data_in_arg: binary input stream
+   */
+  void entropyDecoding (std::istream & compressed_tree_data_in_arg);
 
 
-	/** \brief Pointer to output point cloud dataset. */
+  /** \brief Pointer to output point cloud dataset. */
   PointCloudPtr output;
 
-	/** \brief Vector for storing binary tree structure */
+  /** \brief Vector for storing binary tree structure */
   std::vector<char> binary_tree_data_vector;
 
-	/** \brief Vector for storing point intensity information  */
+  /** \brief Vector for storing point intensity information  */
   std::vector<char> pointIntensityVector;
 
-	/** \brief Iterator on differential point information vector */
+  /** \brief Iterator on differential point information vector */
   std::vector<char>::const_iterator pointIntensityVectorIterator;
 
-	/** \brief Static range coder instance */
+  /** \brief Static range coder instance */
   pcl::StaticRangeCoder entropy_coder;
 
-	// Settings
+  // Settings
   uint32_t frame_ID;
   uint64_t point_count;
   uint64_t compressed_point_data_len;
   bool i_frame;
 
-	//bool activating statistics
+  //bool activating statistics
   bool b_show_statistics;
 
-	//header
-  const char* frame_header_identifier;
+  //header
+  const char * frame_header_identifier;
 
 };
 

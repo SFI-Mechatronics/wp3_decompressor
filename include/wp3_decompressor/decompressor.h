@@ -38,33 +38,33 @@ namespace wp3 {
 class CloudDecompressor
 {
 public:
-	// Constructor
-	CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, const float intensityLimit, const bool showStatistics);
+  // Constructor
+  CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, const float intensityLimit, const bool showStatistics);
 
-	// Deconstrucor
-	~CloudDecompressor();
+  // Deconstrucor
+  ~CloudDecompressor();
 
-	// Callback for PointCloudXYZ subscriber
-	void roscallback(const std_msgs::String::ConstPtr& msg);
+  // Callback for PointCloudXYZ subscriber
+  void roscallback(const std_msgs::String::ConstPtr & msg);
 
 private:
 
-	// ROS variables
+  // ROS variables
   ros::NodeHandle nh;
   ros::Subscriber sub;
   ros::Publisher pub;
 
-	// Pointers to temporary point clouds
+  // Pointers to temporary point clouds
   PointCloudXYZI::Ptr decompressedCloud;
   PointCloudXYZI::Ptr outputCloud;
 
   Decompressor pointCloudDecoder;
 
-	// Passthrough filter
+  // Passthrough filter
   float intensityLimit;
   pcl::PassThrough<PointType_out> ptfilter; // Initializing with true will allow us to extract the removed indices
 
-	// Logging
+  // Logging
   bool showStatistics;
   std::string logFile;
   std::ofstream logStream;
