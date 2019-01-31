@@ -41,8 +41,8 @@ catkin_make
 ````
 
 ## Usage
-The compressor can be started by using the **.launch** file found in the **launch/** folder. 
+The decompressor can be started by using the **.launch** file found in the **launch/** folder. 
 This contains parameters such as sensor name and filter value. The file must be adapted based on the sensors used by the compressor.
 
 ## Bugs & Feature Requests
-Please report bugs and request features using the [Issue Tracker](https://github.com/SFI-Mechatronics/wp3_compressor/issues).
+Please report bugs and request features using the [Issue Tracker](https://github.com/SFI-Mechatronics/wp3_decompressor/issues).
