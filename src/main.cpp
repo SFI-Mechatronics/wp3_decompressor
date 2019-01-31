@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     std::string outputTopic;
     std::string inputTopic;
     std::string sensorName;
-    int filterValue;
+    float filterValue;
     int sensorType;
 
 
