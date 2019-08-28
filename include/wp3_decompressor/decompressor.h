@@ -24,8 +24,6 @@
 
 #include "octree_decompression.h"
 
-// Defines
-#define _GLOBALFRAME "world"
 
 
 typedef pcl::PointXYZI PointType_out;
@@ -39,7 +37,7 @@ class CloudDecompressor
 {
 public:
   // Constructor
-  CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, const float intensityLimit, const bool showStatistics);
+  CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, std::string sensorFrame, const float intensityLimit, const bool showStatistics);
 
   // Deconstrucor
   ~CloudDecompressor();
@@ -59,6 +57,9 @@ private:
   PointCloudXYZI::Ptr outputCloud;
 
   Decompressor pointCloudDecoder;
+
+  // pointcloud frame
+  std::string sensorFrame;
 
   // Passthrough filter
   float intensityLimit;
