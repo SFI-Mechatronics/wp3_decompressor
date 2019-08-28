@@ -10,10 +10,11 @@
 namespace wp3 {
 
 // Constructor
-CloudDecompressor::CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, const float intensityLimit, const bool showStatistics) :
+CloudDecompressor::CloudDecompressor(std::string outputCloudTopic, std::string inputMsgTopic, std::string sensorFrame, const float intensityLimit, const bool showStatistics) :
   decompressedCloud(new PointCloudXYZI ()),
   outputCloud(new PointCloudXYZI ()),
   ptfilter(false),
+  sensorFrame(sensorFrame),
   intensityLimit(intensityLimit),
   showStatistics(showStatistics),
   logFile("/home/sfi/decompressorlog.txt"),
@@ -57,7 +58,7 @@ void CloudDecompressor::roscallback(const std_msgs::String::ConstPtr & msg){
   double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.0;
 
   // Publish the decompressed cloud
-  outputCloud->header.frame_id = _GLOBALFRAME;
+  outputCloud->header.frame_id = sensorFrame;
   pub.publish(outputCloud);
 
   if (showStatistics)

@@ -51,6 +51,7 @@ int main(int argc, char **argv)
     std::string outputTopic;
     std::string inputTopic;
     std::string sensorName;
+    std::string sensorFrame;
     float filterValue;
     int sensorType;
 
@@ -58,6 +59,7 @@ int main(int argc, char **argv)
     nh.getParam("sensor_name", sensorName);
     nh.getParam("filter_value", filterValue);
     nh.getParam("sensor_type", sensorType);
+    nh.param<std::string>("sensor_frame", sensorFrame, "world");
 
     switch(sensorType) {
     case 0: // Kinect
@@ -78,7 +80,7 @@ int main(int argc, char **argv)
     ros::Duration(1.0).sleep();
 
     // Start decompressor
-    wp3::CloudDecompressor decompressor(outputTopic, inputTopic, filterValue, false);
+    wp3::CloudDecompressor decompressor(outputTopic, inputTopic, sensorFrame, filterValue, false);
 
 
     while(ros::ok()){
