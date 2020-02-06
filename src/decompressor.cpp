@@ -25,7 +25,7 @@ CloudDecompressor::CloudDecompressor(std::string outputCloudTopic, std::string i
     logStream << "Time" << std::endl;
   }
 
-  sub = nh.subscribe<std_msgs::String>(inputMsgTopic, 1, &wp3::CloudDecompressor::roscallback, this);
+  sub = nh.subscribe<wp3_decompressor::comp_msg>(inputMsgTopic, 1, &wp3::CloudDecompressor::roscallback, this);
   pub = nh.advertise<PointCloudXYZI>(outputCloudTopic, 1);
 }
 
@@ -35,7 +35,7 @@ CloudDecompressor::~CloudDecompressor(){
 }
 
 // Callback for ROS subscriber
-void CloudDecompressor::roscallback(const std_msgs::String::ConstPtr & msg){
+void CloudDecompressor::roscallback(const wp3_decompressor::comp_msg::ConstPtr & msg){
 
   time_t start = clock();
 
@@ -59,6 +59,8 @@ void CloudDecompressor::roscallback(const std_msgs::String::ConstPtr & msg){
 
   // Publish the decompressed cloud
   outputCloud->header.frame_id = sensorFrame;
+  outputCloud->header.seq = msg->header.seq;
+  pcl_conversions::toPCL(msg->header.stamp, outputCloud->header.stamp);
   pub.publish(outputCloud);
 
   if (showStatistics)
