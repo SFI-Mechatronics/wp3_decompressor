@@ -64,7 +64,7 @@ public:
     pointIntensityVector (),
     pointIntensityVectorIterator (){
 
-    frame_header_identifier = "<WP3-OCT-COMPRESSED>";
+    frame_header_identifier = "<HEAD>";
     //this->setResolution (octree_resolution_);
 
   } // End Constructor
