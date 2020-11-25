@@ -60,6 +60,7 @@ public:
     frame_ID (0),
     point_count (0),
     i_frame (true),
+    initialized(false),
     b_show_statistics (showStatistics_arg),
     pointIntensityVector (),
     pointIntensityVectorIterator (){
@@ -76,7 +77,6 @@ public:
   }
 
 
-
   /** \brief Provide a pointer to the output data set.
    * \param cloud_arg: the boost shared pointer to a PointCloud message
    */
@@ -90,8 +90,8 @@ public:
 
 
   /** \brief Decode point cloud from input stream
-   * \param compressed_tree_data_in_arg: binary input stream containing compressed data
-   * \param cloud_arg: reference to decoded point cloud
+   *  \param compressed_tree_data_in_arg: binary input stream containing compressed data
+   *  \param cloud_arg: reference to decoded point cloud
    */
   void decodePointCloud (std::istream & compressed_tree_data_in_arg, PointCloudPtr & cloud_arg);
 
@@ -122,19 +122,19 @@ private:
 
 
   /** \brief Read frame information to output stream
-   * \param compressed_tree_data_in_arg: binary input stream
+   *  \param compressed_tree_data_in_arg: binary input stream
    */
-  void readFrameHeader (std::istream & compressed_tree_data_in_arg);
+  int readFrameHeader (std::istream & compressed_tree_data_in_arg);
 
 
   /** \brief Synchronize to frame header
-   * \param compressed_tree_data_in_arg: binary input stream
+   *  \param compressed_tree_data_in_arg: binary input stream
    */
   void syncToHeader (std::istream & compressed_tree_data_in_arg);
 
 
   /** \brief Entropy decoding of input binary stream and output to information vectors
-   * \param compressed_tree_data_in_arg: binary input stream
+   *  \param compressed_tree_data_in_arg: binary input stream
    */
   void entropyDecoding (std::istream & compressed_tree_data_in_arg);
 
@@ -159,6 +159,7 @@ private:
   uint64_t point_count;
   uint64_t compressed_point_data_len;
   bool i_frame;
+  bool initialized;
 
   //bool activating statistics
   bool b_show_statistics;

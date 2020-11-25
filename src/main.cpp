@@ -10,10 +10,6 @@
 
 #include "wp3_decompressor/decompressor.h"
 
-// Setup
-#define MIN_POINTS 3 //minimum number of points in compressed voxels
-#define ROS_RATE 60
-
 void killHandler(int)
 {
   ROS_INFO("%s","Shutdown request received.");
@@ -32,13 +28,6 @@ int main(int argc, char **argv)
 
   signal(SIGINT, killHandler);
   signal(SIGTERM, killHandler);
-
-  ros::Rate loopRate(ROS_RATE);
-
-  // Multithreaded spinner
-  //    	ros::AsyncSpinner spinner(8);
-  //    	spinner.start();
-  //    	usleep(1000000); // give the spinner some time to start (1000 ms)
 
   if(!nh.hasParam("sensor_name"))
     ROS_ERROR("%s","Missing _sensor_name:=<name> parameter! Shutting down...");
@@ -77,16 +66,12 @@ int main(int argc, char **argv)
 
     } // End switch (sensorType)
 
-    ros::Duration(1.0).sleep();
-
     // Start decompressor
     wp3::CloudDecompressor decompressor(outputTopic, inputTopic, sensorFrame, filterValue, false);
 
+    ros::Duration(1.0).sleep();
 
-    while(ros::ok()){
-      ros::spinOnce();
-      loopRate.sleep();
-    }
+    ros::spin();
   }
 
   if(ros::ok()){

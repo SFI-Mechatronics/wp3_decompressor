@@ -37,7 +37,6 @@ CloudDecompressor::~CloudDecompressor(){
 // Callback for ROS subscriber
 void CloudDecompressor::roscallback(const std_msgs::String::ConstPtr & msg){
 
-  time_t start = clock();
 
   // Stream for storing serialized compressed point cloud
   std::stringstream compressedData;
@@ -48,22 +47,16 @@ void CloudDecompressor::roscallback(const std_msgs::String::ConstPtr & msg){
   // Decode stream to point cloud
   pointCloudDecoder.decodePointCloud (compressedData, decompressedCloud);
 
-  // Filter point cloud based on intensity
-  ptfilter.setInputCloud (decompressedCloud);
-  ptfilter.setFilterFieldName ("intensity");
-  ptfilter.setFilterLimits (intensityLimit, FLT_MAX);
-  ptfilter.filter (*outputCloud);
+  if(decompressedCloud->width > 0){
+    // Filter point cloud based on intensity
+    ptfilter.setInputCloud (decompressedCloud);
+    ptfilter.setFilterFieldName ("intensity");
+    ptfilter.setFilterLimits (intensityLimit, FLT_MAX);
+    ptfilter.filter (*outputCloud);
 
-  clock_t end = clock();
-  double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.0;
-
-  // Publish the decompressed cloud
-  outputCloud->header.frame_id = sensorFrame;
-  pub.publish(outputCloud);
-
-  if (showStatistics)
-  {
-    logStream << time << std::endl;
+    // Publish the decompressed cloud
+    outputCloud->header.frame_id = sensorFrame;
+    pub.publish(outputCloud);
   }
 
 }
