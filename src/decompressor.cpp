@@ -43,7 +43,8 @@ void CloudDecompressor::roscallback(const wp3_decompressor::comp_msg::ConstPtr &
 
   // Retreive data from message
   compressedData << msg->data;
-
+  compressedData.flush();
+  
   // Decode stream to point cloud
   pointCloudDecoder.decodePointCloud (compressedData, decompressedCloud);
 
