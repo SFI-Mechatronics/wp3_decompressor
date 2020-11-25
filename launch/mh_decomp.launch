@@ -6,7 +6,7 @@
     <param name="sensor_name" value="jetson1" />
     <param name="sensor_frame" value="world" />
     <param name="sensor_type" value="0" />
-    <param name="filter_value" value="50" />
+    <param name="filter_value" value="80" />
 </node>
 
 <!-- ================= Jetson2 ======================= -->
@@ -14,7 +14,7 @@
     <param name="sensor_name" value="jetson2" />
     <param name="sensor_frame" value="world" />
     <param name="sensor_type" value="0" />
-    <param name="filter_value" value="50" />
+    <param name="filter_value" value="80" />
 </node>
 
 <!-- ================= Jetson3 ======================= -->
@@ -22,7 +22,7 @@
     <param name="sensor_name" value="jetson3" />
     <param name="sensor_frame" value="world" />
     <param name="sensor_type" value="0" />
-    <param name="filter_value" value="50" />
+    <param name="filter_value" value="80" />
 </node>
 
 <!-- ================= Jetson4 ======================= -->
@@ -30,7 +30,7 @@
     <param name="sensor_name" value="jetson4" />
     <param name="sensor_frame" value="world" />
     <param name="sensor_type" value="0" />
-    <param name="filter_value" value="50" />
+    <param name="filter_value" value="80" />
 </node>
 
 <!-- ================= Jetson5 ======================= -->
@@ -38,7 +38,7 @@
     <param name="sensor_name" value="jetson5" />
     <param name="sensor_frame" value="world" />
     <param name="sensor_type" value="0" />
-    <param name="filter_value" value="50" />
+    <param name="filter_value" value="80" />
 </node>
 
 <!-- ================= Jetson6 ======================= -->

@@ -21,8 +21,10 @@
 #include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include "octree_decompression.h"
+#include "wp3_decompressor/comp_msg.h"
 
 
 
@@ -43,7 +45,7 @@ public:
   ~CloudDecompressor();
 
   // Callback for PointCloudXYZ subscriber
-  void roscallback(const std_msgs::String::ConstPtr & msg);
+  void roscallback(const wp3_decompressor::comp_msg::ConstPtr & msg);
 
 private:
 
@@ -60,6 +62,7 @@ private:
 
   // pointcloud frame
   std::string sensorFrame;
+
 
   // Passthrough filter
   float intensityLimit;

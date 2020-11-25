@@ -55,17 +55,16 @@ public:
    *
    */
   PointCloudDecompression ( bool showStatistics_arg = false) :
-    OctreePointCloud<PointT, LeafT, BranchT, OctreeT> (0.05),
+    OctreePointCloud<PointT, LeafT, BranchT, OctreeT> (0.04),
     entropy_coder (),
     frame_ID (0),
     point_count (0),
-    i_frame (true),
     initialized(false),
     b_show_statistics (showStatistics_arg),
     pointIntensityVector (),
     pointIntensityVectorIterator (){
 
-    frame_header_identifier = "<WP3-OCT-COMPRESSED>";
+    frame_header_identifier = "<HEAD>";
     //this->setResolution (octree_resolution_);
 
   } // End Constructor
@@ -95,22 +94,6 @@ public:
    */
   void decodePointCloud (std::istream & compressed_tree_data_in_arg, PointCloudPtr & cloud_arg);
 
-
-  /** \brief Get the amount of points within a leaf node voxel which is addressed by a point
-   * \param[in] point_arg: a point addressing a voxel
-   * \return amount of points that fall within leaf node voxel
-   */
-  unsigned int getVoxelDensityAtPoint (const PointT & point_arg) const
-  {
-    unsigned int point_count = 0;
-
-    OctreePointCloudDensityContainer * leaf = this->findLeafAtPoint (point_arg);
-
-    if (leaf)
-      point_count = leaf->getPointCounter ();
-
-    return (point_count);
-  }
 
 private:
 
