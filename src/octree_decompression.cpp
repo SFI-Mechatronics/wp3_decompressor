@@ -17,51 +17,60 @@ void PointCloudDecompression::decodePointCloud (std::istream & compressed_tree_d
 
   // initialize octree
   this->switchBuffers ();
-  this->setOutputCloud (cloud_arg);
+  setOutputCloud (cloud_arg);
 
   // read header from input stream
-  this->readFrameHeader (compressed_tree_data_in_arg);
+  if (readFrameHeader (compressed_tree_data_in_arg))
+    initialized = true;
 
-  // decode data vectors from stream
-  this->entropyDecoding (compressed_tree_data_in_arg);
+  if (initialized){
+    // decode data vectors from stream
+    entropyDecoding (compressed_tree_data_in_arg);
 
-  // initialize point decoding
-  pointIntensityVectorIterator = pointIntensityVector.begin ();
+    // initialize point decoding
+    pointIntensityVectorIterator = pointIntensityVector.begin ();
 
-  // initialize output cloud
-  output->points.clear ();
-  output->points.reserve (static_cast<std::size_t> (point_count));
+    // initialize output cloud
+    output->points.clear ();
+    output->points.reserve (static_cast<std::size_t> (point_count));
 
-  if (i_frame)
-    // i-frame decoding - decode tree structure without referencing previous buffer
-    this->deserializeTree (binary_tree_data_vector, false);
-  else
-    // p-frame decoding - decode XOR encoded tree structure
-    this->deserializeTree (binary_tree_data_vector, true);
+    if (i_frame)
+      // i-frame decoding - decode tree structure without referencing previous buffer
+      this->deserializeTree (binary_tree_data_vector, false);
+    else
+      // p-frame decoding - decode XOR encoded tree structure
+      this->deserializeTree (binary_tree_data_vector, true);
 
-  // assign point cloud properties
-  output->width = static_cast<uint32_t> (output->size());
-  output->height = 1;
-  output->is_dense = true;
+    // assign point cloud properties
+    output->width = static_cast<uint32_t> (output->size());
+    output->height = 1;
+    output->is_dense = true;
 
-  if (b_show_statistics)
-  {
-    float bytes_per_XYZ = static_cast<float> (compressed_point_data_len) / static_cast<float> (point_count);
+    if (b_show_statistics)
+    {
+      // float bytes_per_XYZ = static_cast<float> (compressed_point_data_len) / static_cast<float> (point_count);
 
-    //		PCL_INFO ("*** POINTCLOUD DECODING ***\n");
-    PCL_INFO ("Frame ID: %d\n", frame_ID);
-    //		if (i_frame)
-    //			PCL_INFO ("Decoding Frame: Intra frame\n");
-    //		else
-    //			PCL_INFO ("Decoding Frame: Prediction frame\n");
-    //		PCL_INFO ("Number of decoded points: %ld\n", point_count_);
-    //		PCL_INFO ("XYZ compression percentage: %f%%\n", bytes_per_XYZ / (3.0f * sizeof (float)) * 100.0f);
-    //		PCL_INFO ("XYZ bytes per point: %f bytes\n", bytes_per_XYZ);
-    //		PCL_INFO ("Size of uncompressed point cloud: %f kBytes\n", static_cast<float> (point_count_) * (sizeof (int) + 3.0f * sizeof (float)) / 1024.0f);
-    //		PCL_INFO ("Size of compressed point cloud: %f kBytes\n", static_cast<float> (compressed_point_data_len_) / 1024.0f);
-    //		PCL_INFO ("Total bytes per point: %f bytes\n", bytes_per_XYZ);
-    //		PCL_INFO ("Total compression percentage: %f%%\n", (bytes_per_XYZ) / (sizeof (int) + 3.0f * sizeof (float)) * 100.0f);
-    //		PCL_INFO ("Compression ratio: %f\n\n", static_cast<float> (sizeof (int) + 3.0f * sizeof (float)) / static_cast<float> (bytes_per_XYZ));
+      //		PCL_INFO ("*** POINTCLOUD DECODING ***\n");
+      PCL_INFO ("Frame ID: %d\n", frame_ID);
+      //		if (i_frame)
+      //			PCL_INFO ("Decoding Frame: Intra frame\n");
+      //		else
+      //			PCL_INFO ("Decoding Frame: Prediction frame\n");
+      //		PCL_INFO ("Number of decoded points: %ld\n", point_count_);
+      //		PCL_INFO ("XYZ compression percentage: %f%%\n", bytes_per_XYZ / (3.0f * sizeof (float)) * 100.0f);
+      //		PCL_INFO ("XYZ bytes per point: %f bytes\n", bytes_per_XYZ);
+      //		PCL_INFO ("Size of uncompressed point cloud: %f kBytes\n", static_cast<float> (point_count_) * (sizeof (int) + 3.0f * sizeof (float)) / 1024.0f);
+      //		PCL_INFO ("Size of compressed point cloud: %f kBytes\n", static_cast<float> (compressed_point_data_len_) / 1024.0f);
+      //		PCL_INFO ("Total bytes per point: %f bytes\n", bytes_per_XYZ);
+      //		PCL_INFO ("Total compression percentage: %f%%\n", (bytes_per_XYZ) / (sizeof (int) + 3.0f * sizeof (float)) * 100.0f);
+      //		PCL_INFO ("Compression ratio: %f\n\n", static_cast<float> (sizeof (int) + 3.0f * sizeof (float)) / static_cast<float> (bytes_per_XYZ));
+    }
+  }
+  else{ // not initialized
+    output->points.clear ();
+    output->width = 0;
+    output->height = 0;
+    output->is_dense = true;
   }
 } // End decodePointCloud
 
@@ -80,7 +89,7 @@ void PointCloudDecompression::syncToHeader (std::istream & compressed_tree_data_
 } // End syncToHeader
 
 
-void PointCloudDecompression::readFrameHeader ( std::istream & compressed_tree_data_in_arg)
+int PointCloudDecompression::readFrameHeader ( std::istream & compressed_tree_data_in_arg)
 {
   // read header
   compressed_tree_data_in_arg.read (reinterpret_cast<char *> (&frame_ID), sizeof (frame_ID));
@@ -107,7 +116,9 @@ void PointCloudDecompression::readFrameHeader ( std::istream & compressed_tree_d
     this->setResolution (octree_resolution);
     this->defineBoundingBox (min_x, min_y, min_z, max_x, max_y, max_z);
 
+    return 1;
   }
+  return 0;
 } // End readFrameHeader
 
 
