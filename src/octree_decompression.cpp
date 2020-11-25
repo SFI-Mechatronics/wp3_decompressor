@@ -24,6 +24,7 @@ void PointCloudDecompression::decodePointCloud (std::istream & compressed_tree_d
     initialized = true;
 
   if (initialized){
+
     // decode data vectors from stream
     entropyDecoding (compressed_tree_data_in_arg);
 

@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <ros/ros.h>
+
 #include <pcl/common/common.h>
 #include <pcl/common/io.h>
 

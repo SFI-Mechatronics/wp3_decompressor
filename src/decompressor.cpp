@@ -37,7 +37,6 @@ CloudDecompressor::~CloudDecompressor(){
 // Callback for ROS subscriber
 void CloudDecompressor::roscallback(const wp3_decompressor::comp_msg::ConstPtr & msg){
 
-
   // Stream for storing serialized compressed point cloud
   std::stringstream compressedData;
 
